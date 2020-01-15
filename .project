@@ -37,14 +37,4 @@
 			<locationURI>LibRasbian</locationURI>
 		</link>
 	</linkedResources>
-	<variableList>
-		<variable>
-			<name>IncludeRasbian</name>
-			<value>$%7BPARENT-2-PROJECT_LOC%7D/toolsChaine/include</value>
-		</variable>
-		<variable>
-			<name>LibRasbian</name>
-			<value>$%7BPARENT-2-PROJECT_LOC%7D/toolsChaine/lib</value>
-		</variable>
-	</variableList>
 </projectDescription>
