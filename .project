@@ -25,16 +25,4 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>IncludeRasbian</name>
-			<type>2</type>
-			<locationURI>IncludeRasbian</locationURI>
-		</link>
-		<link>
-			<name>LibRasbian</name>
-			<type>2</type>
-			<locationURI>LibRasbian</locationURI>
-		</link>
-	</linkedResources>
 </projectDescription>
