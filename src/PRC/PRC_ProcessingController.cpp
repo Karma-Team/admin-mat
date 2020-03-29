@@ -12,7 +12,7 @@ using namespace std;
 namespace PRC
 {
 
-	CProcessingController::CProcessingController(ACQ::CCameraInput &p_cameraInput)
+	CProcessingController::CProcessingController(ACQ::CCameraInput *p_cameraInput)
 	{
 		m_cameraInput = p_cameraInput;
 		m_isRunning = true;

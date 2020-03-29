@@ -27,7 +27,7 @@ namespace PRC
 			/**
 			 @brief constructor - start processing thread
 			 */
-			CProcessingController(ACQ::CCameraInput &p_cameraInput);
+			CProcessingController(ACQ::CCameraInput *p_cameraInput);
 
 			/**
 			 * @brief destructor - stop processing thread before destruction
@@ -39,7 +39,7 @@ namespace PRC
 			 */
 			void runProcessing();
 
-			ACQ::CCameraInput m_cameraInput;	// Camera interface
+			ACQ::CCameraInput *m_cameraInput;	// Camera interface
 			std::thread m_detectionThread;		// Detection thread
 			std::thread m_correctionThread;		// Correction thread
 			std::mutex m_runMutex;				// Protect the isRunning variable
