@@ -92,6 +92,8 @@
                                     <listOptionValue builtIn="false" value="/opt/raspi/include"/>
                                     									
                                     <listOptionValue builtIn="false" value="/opt/opencv-4.2.0/include/opencv4"/>
+                                    									
+                                    <listOptionValue builtIn="false" value="&quot;${workspace_loc:/admin-mat/src}&quot;"/>
                                     								
                                 </option>
                                 								
