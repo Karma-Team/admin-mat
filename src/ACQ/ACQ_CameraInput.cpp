@@ -15,6 +15,7 @@ namespace ACQ
 	CCameraInput::CCameraInput()
 	{
 		m_readPointer = -1;
+		m_prevWrPointer = -1;
 		m_writePointer = -1;
 		m_isRunning = false;
 		m_thread = thread(&CCameraInput::cameraReader, this);
@@ -33,13 +34,11 @@ namespace ACQ
 
 	THD::CThreadSafeObject<cv::Mat>* CCameraInput::getValidStorage()
 	{
-		//TODO update readPointer
+		unique_lock<mutex> lckPtr(m_pointerMutex);
+		while (m_prevWrPointer == m_readPointer)
+			m_updatePtr.wait(lckPtr);
+		m_readPointer = m_prevWrPointer;
 		return &m_buffers[m_readPointer];
-	}
-
-	void CCameraInput::selectAvailableStorage()
-	{
-		//TODO update writePointer
 	}
 
 	void CCameraInput::cameraReader()
@@ -49,9 +48,20 @@ namespace ACQ
 		while (m_isRunning)
 		{
 			// Select Available Storage
-			//TODO select camera avaible storage
+			unique_lock<mutex> lckPtr(m_pointerMutex);
+			do
+			{
+				m_writePointer = (m_writePointer + 1) % ACQ_BUFFER_SIZE;
+			} while (m_writePointer != m_readPointer);
+			THD::CThreadSafeObject<cv::Mat>::CWriter writer(&m_buffers[m_writePointer]);
+			lckPtr.unlock();
 			// Read Camera
-			//TODO read camera
+			//TODO read camera into writer
+			// Update prevWr pointer
+			lckPtr.lock();
+			m_prevWrPointer = m_writePointer;
+			m_updatePtr.notify_all();
+			lckPtr.unlock();
 			// Sleep time
 			m_runCV.wait_for(lckRun, chrono::milliseconds(ACQ_LOOP_SLEEP_TIME_MS));
 		}
