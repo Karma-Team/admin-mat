@@ -62,7 +62,7 @@ namespace ACQ
 			do
 			{
 				m_writePointer = (m_writePointer + 1) % ACQ_BUFFER_SIZE;
-			} while (m_writePointer != m_readPointer);
+			} while (m_writePointer == m_readPointer);
 			THD::CThreadSafeObject<cv::Mat>::CWriter writer(&m_buffers[m_writePointer]);
 			lckPtr.unlock();
 			// Read Camera
