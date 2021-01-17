@@ -7,6 +7,8 @@
 
 #include "ACQ_CameraInput.hpp"
 
+#include "DBG/DBG_Logger.hpp"
+
 using namespace std;
 
 namespace ACQ
@@ -35,6 +37,7 @@ namespace ACQ
 	THD::CThreadSafeObject<cv::Mat>* CCameraInput::getValidStorage()
 	{
 		unique_lock<mutex> lckPtr(m_pointerMutex);
+		// Wait until new write
 		while (m_prevWrPointer == m_readPointer)
 			m_updatePtr.wait(lckPtr);
 		m_readPointer = m_prevWrPointer;
@@ -43,6 +46,7 @@ namespace ACQ
 
 	void CCameraInput::cameraReader()
 	{
+		int res;
 		unique_lock<mutex> lckRun(m_runMutex);
 		m_isRunning = true;
 		while (m_isRunning)
@@ -56,7 +60,9 @@ namespace ACQ
 			THD::CThreadSafeObject<cv::Mat>::CWriter writer(&m_buffers[m_writePointer]);
 			lckPtr.unlock();
 			// Read Camera
-			//TODO read camera into writer
+			cv::Mat *writePtr = writer.ptr;
+			res = getCameraImage(writePtr);
+			if (res) continue;
 			// Update prevWr pointer
 			lckPtr.lock();
 			m_prevWrPointer = m_writePointer;
@@ -67,6 +73,21 @@ namespace ACQ
 		}
 		// Notify destructor that thread is over
 		m_runCV.notify_all();
+	}
+
+	int CCameraInput::getCameraImage(cv::Mat* inputImage)
+	{
+		//TODO Handle a webcam
+		// Temp reader for dev
+		*inputImage = cv::imread("capture.png", cv::IMREAD_COLOR);
+
+		// We check that our image has been correctly loaded
+		if (inputImage->empty()) {
+			DBG::CLogger::Error("Error: the image has been incorrectly loaded.");
+			return 1;
+		}
+
+		return 0;
 	}
 
 } /* namespace ACQ */

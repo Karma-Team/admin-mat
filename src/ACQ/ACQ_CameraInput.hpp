@@ -58,6 +58,11 @@ namespace ACQ
 			 */
 			void cameraReader();
 
+			/**
+			 * @brief camera access
+			 */
+			int getCameraImage(cv::Mat* inputImage);
+
 			THD::CThreadSafeObject<cv::Mat> m_buffers[ACQ_BUFFER_SIZE];	// Storage space
 			std::mutex m_pointerMutex;									// Protect the access to read and write pointer
 			std::condition_variable m_updatePtr;						// Notify update on write pointer
