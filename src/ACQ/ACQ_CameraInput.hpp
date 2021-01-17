@@ -16,7 +16,7 @@
 #include "THD/THD_ThreadSafeObject.hpp"
 
 #define ACQ_BUFFER_SIZE 3
-#define ACQ_LOOP_SLEEP_TIME_MS 10
+#define ACQ_LOOP_SLEEP_TIME_MS 1000
 
 namespace ACQ
 {

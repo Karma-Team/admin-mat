@@ -34,9 +34,11 @@ namespace ACQ
 		// Halt thread
 		m_isRunning = false;
 		// Notify thread that it's other
+		m_thread.detach();
 		m_runCV.notify_all();
 		// Wait end of thread
 		m_runCV.wait(lckRun);
+		DBG::CLogger::Warning("CCameraInput deleted");
 	}
 
 	THD::CThreadSafeObject<cv::Mat>* CCameraInput::getValidStorage()

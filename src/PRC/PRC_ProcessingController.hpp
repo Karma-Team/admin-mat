@@ -11,8 +11,11 @@
 #include <thread>
 #include <mutex>
 #include <condition_variable>
+#include <chrono>
 
 #include "ACQ/ACQ_CameraInput.hpp"
+
+#define PRC_LOOP_SLEEP_TIME_MS 1
 
 namespace PRC
 {
