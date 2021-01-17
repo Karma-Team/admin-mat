@@ -13,13 +13,18 @@ using namespace std;
 
 namespace ACQ
 {
+	std::mutex CCameraInput::m_pointerMutex;								// Protect the access to read and write pointer
+	std::condition_variable CCameraInput::m_updatePtr;						// Notify update on write pointer
+	std::mutex CCameraInput::m_runMutex;									// Protect the isRunning variable
+	std::condition_variable CCameraInput::m_runCV;							// Notify update on isRunning
 
-	CCameraInput::CCameraInput()
+	CCameraInput::CCameraInput(THD::CThreadSafeObject<cv::Mat> buffers[ACQ_BUFFER_SIZE])
 	{
 		m_readPointer = -1;
 		m_prevWrPointer = -1;
 		m_writePointer = -1;
 		m_isRunning = false;
+		m_buffers = buffers;
 		m_thread = thread(&CCameraInput::cameraReader, this);
 	}
 
@@ -49,6 +54,7 @@ namespace ACQ
 		int res;
 		unique_lock<mutex> lckRun(m_runMutex);
 		m_isRunning = true;
+		DBG::CLogger::Debug("CCameraInput::cameraReader: Start loop");
 		while (m_isRunning)
 		{
 			// Select Available Storage

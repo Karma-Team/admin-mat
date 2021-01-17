@@ -19,6 +19,8 @@
 #include "TCP/TCP_Server.hpp"
 #include "SSV/SSV_ReadWrite.hpp"
 #include "THD/THD_ThreadSafeObject.hpp"
+#include "PRC/PRC_ProcessingController.hpp"
+#include "ACQ/ACQ_CameraInput.hpp"
 
 using namespace std;
 
@@ -62,5 +64,12 @@ int main() {
 	cv::imwrite("/home/pi/work/ArucoDetection.png", outputImage);
 	DBG::CLogger::Info("Test Cmn lib ok");
 
+
+	DBG::CLogger::Info("Lancement de CProcessingController::runProcessing");
+	THD::CThreadSafeObject<cv::Mat> buffers[ACQ_BUFFER_SIZE];	// Storage space
+	ACQ::CCameraInput cameraInput(buffers);
+	PRC::CProcessingController processingController(&cameraInput);
+
+	DBG::CLogger::Info("Return main");
 	return 0;
 }

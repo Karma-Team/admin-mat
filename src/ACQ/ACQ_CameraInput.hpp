@@ -31,7 +31,7 @@ namespace ACQ
 			/**
 			 @brief constructor - start camera thread
 			 */
-			CCameraInput();
+			CCameraInput(THD::CThreadSafeObject<cv::Mat> buffers[ACQ_BUFFER_SIZE]);	// Storage space
 
 			/**
 			 * @brief destructor - stop camera thread before destruction
@@ -63,16 +63,16 @@ namespace ACQ
 			 */
 			int getCameraImage(cv::Mat* inputImage);
 
-			THD::CThreadSafeObject<cv::Mat> m_buffers[ACQ_BUFFER_SIZE];	// Storage space
-			std::mutex m_pointerMutex;									// Protect the access to read and write pointer
-			std::condition_variable m_updatePtr;						// Notify update on write pointer
-			int m_readPointer;											// Read pointer in storage space
-			int m_writePointer;											// Write pointer
-			int m_prevWrPointer;										// Previous write pointer in storage space
-			std::thread m_thread;										// Camera input thread
-			std::mutex m_runMutex;										// Protect the isRunning variable
-			std::condition_variable m_runCV;							// Notify update on isRunning
-			bool m_isRunning;											// Control thread run
+			THD::CThreadSafeObject<cv::Mat> *m_buffers;	// Storage space
+			static std::mutex m_pointerMutex;									// Protect the access to read and write pointer
+			static std::condition_variable m_updatePtr;							// Notify update on write pointer
+			int m_readPointer;													// Read pointer in storage space
+			int m_writePointer;													// Write pointer
+			int m_prevWrPointer;												// Previous write pointer in storage space
+			std::thread m_thread;												// Camera input thread
+			static std::mutex m_runMutex;										// Protect the isRunning variable
+			static std::condition_variable m_runCV;								// Notify update on isRunning
+			bool m_isRunning;													// Control thread run
 	};
 
 } /* namespace ACQ */

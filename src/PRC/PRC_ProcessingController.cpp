@@ -6,11 +6,14 @@
  */
 
 #include "PRC_ProcessingController.hpp"
+#include "DBG/DBG_Logger.hpp"
 
 using namespace std;
 
 namespace PRC
 {
+	std::mutex CProcessingController::m_runMutex;				// Protect the isRunning variable
+	std::condition_variable CProcessingController::m_runCV;	// Notify update on isRunning
 
 	CProcessingController::CProcessingController(ACQ::CCameraInput *p_cameraInput)
 	{
@@ -36,6 +39,7 @@ namespace PRC
 	{
 		unique_lock<mutex> lckRun(m_runMutex); //TODO deadlock avec le destructeur
 		m_isRunning = true;
+		DBG::CLogger::Debug("Start loop in ProcessingController.");
 		while (m_isRunning)
 		{
 			// Request shared Mat from CameraInput

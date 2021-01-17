@@ -42,8 +42,8 @@ namespace PRC
 			ACQ::CCameraInput *m_cameraInput;	// Camera interface
 			std::thread m_detectionThread;		// Detection thread
 			std::thread m_correctionThread;		// Correction thread
-			std::mutex m_runMutex;				// Protect the isRunning variable
-			std::condition_variable m_runCV;	// Notify update on isRunning
+			static std::mutex m_runMutex;				// Protect the isRunning variable
+			static std::condition_variable m_runCV;	// Notify update on isRunning
 			bool m_isRunning;					// Control thread run
 	};
 
