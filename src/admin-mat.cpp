@@ -10,32 +10,34 @@
 #include <opencv2/aruco.hpp>
 
 #include <iostream>
+#include <string>
 #include <thread>
+#include <mutex>
 #include <wiringPi.h>
 
+#include "DBG/DBG_Logger.hpp"
 #include "TCP/TCP_Server.hpp"
 #include "SSV/SSV_ReadWrite.hpp"
+#include "THD/THD_ThreadSafeObject.hpp"
 
 using namespace std;
 
 
 int main() {
-	cout << "!!!Hello World!!!" << endl; // prints !!!Hello World!!!
+	DBG::CLogger::Info("Hello World!");
+	DBG::CLogger::Debug("Test Debug");
+	DBG::CLogger::Log("Test log");
+	DBG::CLogger::Info("Test info");
+	DBG::CLogger::Warning("Test warning");
+	DBG::CLogger::Error("Test error!");
 
-	cout << "Test cmn lib - start TCP server" << endl;
-	string servAddr = "0.0.0.0";
-	TCP::CTcpServer l_CTcpServer(55000, servAddr);
-	//l_CTcpServer = new TCP::CTcpServer(55000, servAddr);
-	l_CTcpServer.initTcpServer();
-
+	DBG::CLogger::Info("Test opencv");
 	// We'll start by loading an image from the drive
-	cout << "Test opencv" << endl;
 	cv::Mat inputImage = cv::imread("capture.png", cv::IMREAD_COLOR);
 
 	// We check that our image has been correctly loaded
 	if (inputImage.empty()) {
-		cout << "Error: the image has been incorrectly loaded."
-				<< endl;
+		DBG::CLogger::Error("Error: the image has been incorrectly loaded.");
 		return 1;
 	}
 
@@ -52,12 +54,13 @@ int main() {
 	cv::Ptr<cv::aruco::Dictionary> dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_4X4_50);
 	cv::aruco::detectMarkers(inputImage, dictionary, markerCorners, markerIds, parameters, rejectedCandidates);
 
-	cout << "Nb Marker detected: " << markerIds.size() << endl;
+	DBG::CLogger::Info("Nb Marker detected: %d", markerIds.size());
 
 	cv::Mat outputImage = inputImage.clone();
 	cv::aruco::drawDetectedMarkers(outputImage, markerCorners, markerIds);
 
 	cv::imwrite("/home/pi/work/ArucoDetection.png", outputImage);
-	cout << "End" << endl;
+	DBG::CLogger::Info("Test Cmn lib ok");
+
 	return 0;
 }
