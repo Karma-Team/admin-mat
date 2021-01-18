@@ -18,6 +18,8 @@
 #define ACQ_BUFFER_SIZE 3
 #define ACQ_LOOP_SLEEP_TIME_MS 1000
 
+#define NO_WEBCAM 1
+
 namespace ACQ
 {
 
@@ -73,6 +75,7 @@ namespace ACQ
 			static std::mutex m_runMutex;										// Protect the isRunning variable
 			static std::condition_variable m_runCV;								// Notify update on isRunning
 			bool m_isRunning;													// Control thread run
+			cv::VideoCapture m_camera;
 	};
 
 } /* namespace ACQ */

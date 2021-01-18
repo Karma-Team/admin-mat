@@ -38,6 +38,10 @@ namespace ACQ
 		m_runCV.notify_all();
 		// Wait end of thread
 		m_runCV.wait(lckRun);
+#if NO_WEBCAM == 0
+		// Release camera
+		m_camera.release();
+#endif
 		DBG::CLogger::Warning("CCameraInput deleted");
 	}
 
@@ -56,6 +60,23 @@ namespace ACQ
 		int res;
 		unique_lock<mutex> lckRun(m_runMutex);
 		m_isRunning = true;
+
+#if NO_WEBCAM == 0
+		// https://docs.opencv.org/4.4.0/d8/dfe/classcv_1_1VideoCapture.html
+		DBG::CLogger::Info("CCameraInput::cameraReader: Start webcam");
+		int deviceID = 0;             // 0 = open default camera
+		int apiID = cv::CAP_ANY;      // 0 = autodetect default API
+		m_camera.open(deviceID, apiID);
+		if (m_camera.isOpened())
+		{
+			DBG::CLogger::Info("Camera open OK! %d", m_camera.isOpened());
+		}
+		else
+		{
+			DBG::CLogger::Error("Camera open failed");
+		}
+#endif
+
 		DBG::CLogger::Debug("CCameraInput::cameraReader: Start loop");
 		while (m_isRunning)
 		{
@@ -85,13 +106,17 @@ namespace ACQ
 
 	int CCameraInput::getCameraImage(cv::Mat* inputImage)
 	{
-		//TODO Handle a webcam
-		// Temp reader for dev
+		cv::Mat camImage;
+#if NO_WEBCAM
 		*inputImage = cv::imread("capture.png", cv::IMREAD_COLOR);
+#else
+		m_camera.read(camImage);
+		*inputImage = camImage.clone();
+#endif
 
 		// We check that our image has been correctly loaded
 		if (inputImage->empty()) {
-			DBG::CLogger::Error("Error: the image has been incorrectly loaded.");
+			DBG::CLogger::Error("Error: the image has been incorrectly loaded (isOpened: %d).", m_camera.isOpened());
 			return 1;
 		}
 
