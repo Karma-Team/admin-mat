@@ -65,6 +65,16 @@ namespace PRC
 			cv::Mat outputImage = inputImage.clone();
 			cv::aruco::drawDetectedMarkers(outputImage, markerCorners, markerIds);
 			cv::imwrite("ArucoDetection.png", outputImage);
+			// Tmp debug
+			unsigned int idx, pts;
+			for (idx = 0; idx < markerIds.size(); ++idx)
+			{
+				DBG::CLogger::Info("\tMarker #%d: id %d", idx, markerIds[idx]);
+				for (pts = 0; pts < 4; ++pts)
+				{
+					DBG::CLogger::Info("\t\tCorner %d: %f %f", pts + 1, markerCorners[idx][pts].x, markerCorners[idx][pts].y);
+				}
+			}
 			//TODO spawn ArUco
 			// Spawn Cup Detector
 			//TODO spawn cup detector
